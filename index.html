@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="logo.jpg" type="image/jpeg" sizes="any">
+  <link rel="apple-touch-icon" href="logo.jpg">
+  <title>melnichuk_leo — Product / AI</title>
+  <meta name="description" content="Product and AI: shipped apps, LLM systems, MelniApps.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Framer-like: dark, typography-first — https://www.framer.com/ */
+    :root {
+      --bg: #000000;
+      --fg: #ffffff;
+      --muted: rgba(255, 255, 255, 0.52);
+      --line: rgba(255, 255, 255, 0.14);
+      --line-soft: rgba(255, 255, 255, 0.09);
+      --col-width: 44rem;
+      --hero-width: min(40rem, 100%);
+      --noise-opacity: 0.045;
+      --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 1.03125rem;
+      line-height: 1.65;
+      color: var(--fg);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .noise {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      opacity: var(--noise-opacity);
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+
+    .prose a:not(.link-pill):not(.work-block .title a),
+    .prose a.contact-link {
+      color: var(--fg);
+      text-decoration: underline;
+      text-decoration-color: rgba(255, 255, 255, 0.35);
+      text-underline-offset: 0.22em;
+    }
+
+    .prose a:not(.link-pill):not(.work-block .title a):hover,
+    .prose a.contact-link:hover {
+      text-decoration-color: rgba(255, 255, 255, 0.75);
+    }
+
+    .shell {
+      max-width: calc(var(--col-width) + 3rem);
+      margin: 0 auto;
+      padding: 0 1.25rem 4rem;
+    }
+
+    @media (min-width: 640px) {
+      .shell {
+        padding: 0 2rem 5rem;
+      }
+    }
+
+    /* Header — Framer-style bar */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .header__bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: calc(var(--col-width) + 3rem);
+      margin: 0 auto;
+      padding: 0.85rem 1.25rem;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 640px) {
+      .header__bar {
+        padding: 0.85rem 2rem;
+      }
+    }
+
+    .wordmark {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      color: var(--muted);
+      text-decoration: none;
+      line-height: 1.35;
+      max-width: min(72%, 16rem);
+      word-break: break-word;
+    }
+
+    @media (min-width: 480px) {
+      .wordmark {
+        max-width: none;
+      }
+    }
+
+    .wordmark:hover {
+      color: var(--fg);
+    }
+
+    .lang {
+      display: inline-flex;
+      align-items: stretch;
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+      background: transparent;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .lang button {
+      appearance: none;
+      margin: 0;
+      border: none;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      padding: 0.4rem 0.75rem;
+      cursor: pointer;
+      font: inherit;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+
+    .lang button[aria-pressed="true"] {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .lang button:focus-visible {
+      outline: 2px solid var(--fg);
+      outline-offset: 3px;
+    }
+
+    /* Hero — centered, Framer-scale type */
+    .hero {
+      text-align: center;
+      padding: clamp(2.5rem, 8vw, 5rem) 0 clamp(3rem, 10vw, 6rem);
+      margin: 0 auto;
+      max-width: var(--hero-width);
+    }
+
+    .hero__inner {
+      transition: text-shadow 0.4s ease;
+    }
+
+    @media (hover: hover) {
+      .hero:hover .hero__inner {
+        text-shadow:
+          0.4px 0 0 rgba(255, 80, 100, 0.06),
+          -0.4px 0 0 rgba(80, 160, 255, 0.06);
+      }
+    }
+
+    .hero__meta {
+      margin: 0 auto 1.25rem;
+      max-width: 38ch;
+    }
+
+    .role {
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .role-extra {
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--muted);
+      margin: 0.35rem 0 0;
+      line-height: 1.45;
+      opacity: 0.92;
+    }
+
+    .name-line {
+      font-size: clamp(2rem, 5.5vw, 3.25rem);
+      font-weight: 600;
+      letter-spacing: -0.038em;
+      line-height: 1.12;
+      margin: 0 auto 1.5rem;
+      max-width: min(34rem, 100%);
+      white-space: pre-line;
+    }
+
+    .facts {
+      list-style: none;
+      margin: 0 auto;
+      padding: 0;
+      max-width: 32rem;
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      font-weight: 400;
+      letter-spacing: -0.006em;
+      color: var(--muted);
+      line-height: 1.65;
+      text-align: center;
+    }
+
+    .facts li {
+      margin: 0 0 0.5rem;
+      padding: 0;
+    }
+
+    .facts li::before {
+      display: none;
+    }
+
+    /* Main column: left-aligned content below hero */
+    .main {
+      text-align: left;
+    }
+
+    section {
+      margin-bottom: 3.5rem;
+    }
+
+    h2 {
+      font-family: var(--font-sans);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 1.35rem;
+      padding: 0;
+      border: none;
+    }
+
+    h3 {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      letter-spacing: -0.022em;
+      margin: 0 0 0.5rem;
+    }
+
+    .card {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .card:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .links-row {
+      margin: 0.5rem 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .link-pill {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      text-decoration: none;
+      padding: 0.4rem 0.95rem 0.45rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .link-pill:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .lede {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.96875rem;
+      letter-spacing: -0.008em;
+      line-height: 1.7;
+    }
+
+    .block-copy {
+      margin-top: 0.15rem;
+    }
+
+    .block-copy .lede,
+    .block-copy .block-p {
+      white-space: pre-line;
+    }
+
+    .block-copy .lede + .block-p {
+      margin-top: 0.75rem;
+    }
+
+    #current .section-lede {
+      margin-top: 0;
+    }
+
+    .block-p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 0.9375rem;
+      letter-spacing: -0.006em;
+      line-height: 1.7;
+    }
+
+    .subhead {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 1rem 0 0.4rem;
+    }
+
+    .subhead:first-of-type {
+      margin-top: 0.2rem;
+    }
+
+    ul.plain {
+      margin: 0;
+      padding: 0 0 0 1.15rem;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 0.9375rem;
+      letter-spacing: -0.006em;
+    }
+
+    ul.plain li {
+      margin-bottom: 0.5rem;
+      line-height: 1.68;
+    }
+
+    .section-lede {
+      margin: 0 0 1.15rem;
+      max-width: 40rem;
+    }
+
+    .contact-line .contact-link {
+      margin-left: 0.25rem;
+    }
+
+    .work-block {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .work-block p {
+      margin: 0.5rem 0 0;
+      font-size: 0.9375rem;
+      color: rgba(255, 255, 255, 0.68);
+      letter-spacing: -0.006em;
+      line-height: 1.68;
+    }
+
+    .work-block .title {
+      font-weight: 600;
+      color: var(--fg);
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .work-block .title a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .work-block .title a:hover {
+      text-decoration: underline;
+      text-decoration-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .caps-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 560px) {
+      .caps-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem 2.25rem;
+      }
+    }
+
+    .cap h3 {
+      font-size: 0.9375rem;
+      margin-bottom: 0.55rem;
+      letter-spacing: -0.02em;
+    }
+
+    .cap ul {
+      margin: 0;
+      padding: 0 0 0 1.05rem;
+      font-size: 0.9375rem;
+      color: rgba(255, 255, 255, 0.68);
+      letter-spacing: -0.006em;
+    }
+
+    .cap li {
+      margin-bottom: 0.45rem;
+      line-height: 1.65;
+    }
+
+    .contact-line {
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      color: rgba(255, 255, 255, 0.68);
+      margin: 0;
+      letter-spacing: -0.006em;
+      line-height: 1.68;
+    }
+
+    footer {
+      margin-top: 3.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .work-block__links {
+      margin: 0.5rem 0 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="header__bar">
+      <a class="wordmark" href="#top">melnichuk_leo</a>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" id="btn-en" aria-pressed="true">EN</button>
+        <button type="button" id="btn-ru" aria-pressed="false">RU</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero shell" id="top">
+    <div class="hero__inner">
+      <div class="hero__meta">
+        <p class="role" data-i18n="hero.role"></p>
+        <p class="role-extra" data-i18n="hero.growth"></p>
+      </div>
+      <p class="name-line" data-i18n="hero.tagline"></p>
+      <ul class="facts" id="hero-facts"></ul>
+    </div>
+  </section>
+
+  <div class="shell main prose">
+    <section id="projects">
+      <h2 data-i18n="sec.projects"></h2>
+
+      <article class="card" id="leo">
+        <h3>Leo Recovery</h3>
+        <div class="links-row">
+          <a class="link-pill" href="https://apps.apple.com/ru/app/leo-recovery/id6752736987" target="_blank" rel="noopener noreferrer">App Store</a>
+          <a class="link-pill" href="https://www.producthunt.com/products/leo-recovery/launches/leo-recovery" target="_blank" rel="noopener noreferrer">Product Hunt</a>
+        </div>
+        <div class="block-copy">
+          <p class="lede" data-i18n="leo.p1"></p>
+          <p class="block-p" data-i18n="leo.p2"></p>
+        </div>
+      </article>
+
+      <article class="card" id="fides">
+        <h3>Fides et Ratio</h3>
+        <div class="links-row">
+          <a class="link-pill" href="https://apps.apple.com/ru/app/fides-et-ratio/id6754965341" target="_blank" rel="noopener noreferrer">App Store</a>
+        </div>
+        <div class="block-copy">
+          <p class="lede" data-i18n="fides.p1"></p>
+          <p class="block-p" data-i18n="fides.p2"></p>
+        </div>
+      </article>
+
+      <article class="card" id="marie">
+        <h3>Marie AI</h3>
+        <div class="links-row">
+          <a class="link-pill" href="https://marie-ai.ru" target="_blank" rel="noopener noreferrer">marie-ai.ru</a>
+        </div>
+        <div class="block-copy">
+          <p class="lede" data-i18n="marie.p1"></p>
+          <p class="block-p" data-i18n="marie.p2"></p>
+        </div>
+      </article>
+    </section>
+
+    <section id="ai">
+      <h2 data-i18n="sec.ai"></h2>
+      <p class="lede section-lede" data-i18n="ai.intro"></p>
+      <ul class="plain" data-i18n-list="ai.bullets"></ul>
+      <p class="subhead" style="margin-top: 1.35rem;" data-i18n="ai.hf_label"></p>
+      <div class="links-row" style="margin-top: 0.35rem;">
+        <a class="link-pill" href="https://huggingface.co/LeoMelnich" target="_blank" rel="noopener noreferrer">huggingface.co/LeoMelnich</a>
+      </div>
+    </section>
+
+    <section id="work">
+      <h2 data-i18n="sec.work"></h2>
+      <div class="work-block">
+        <p class="title"><a href="https://melniapps.com" target="_blank" rel="noopener noreferrer">MelniApps</a></p>
+        <div class="links-row work-block__links">
+          <a class="link-pill" href="https://melniapps.com" target="_blank" rel="noopener noreferrer">melniapps.com</a>
+        </div>
+        <p data-i18n="work.p1"></p>
+      </div>
+    </section>
+
+    <section id="capabilities">
+      <h2 data-i18n="sec.cap"></h2>
+      <div class="caps-grid">
+        <div class="cap">
+          <h3 data-i18n="cap.product.t"></h3>
+          <ul data-i18n-list="cap.product.items"></ul>
+        </div>
+        <div class="cap">
+          <h3 data-i18n="cap.ai.t"></h3>
+          <ul data-i18n-list="cap.ai.items"></ul>
+        </div>
+        <div class="cap">
+          <h3 data-i18n="cap.tech.t"></h3>
+          <ul data-i18n-list="cap.tech.items"></ul>
+        </div>
+        <div class="cap">
+          <h3 data-i18n="cap.ux.t"></h3>
+          <ul data-i18n-list="cap.ux.items"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="background">
+      <h2 data-i18n="sec.bg"></h2>
+      <p class="lede section-lede" data-i18n="bg.p1"></p>
+    </section>
+
+    <section id="current">
+      <h2 data-i18n="sec.current"></h2>
+      <div class="block-copy">
+        <p class="lede section-lede" data-i18n="current.p1"></p>
+        <p class="block-p" data-i18n="current.p2"></p>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2 data-i18n="sec.contact"></h2>
+      <p class="contact-line">
+        <span data-i18n="contact.intro"></span>
+        <a class="contact-link" href="https://t.me/rickytickytavylm" target="_blank" rel="noopener noreferrer">Telegram</a>
+      </p>
+    </section>
+
+    <footer></footer>
+  </div>
+
+  <script>
+    (function () {
+      const DATA = {
+        en: {
+          "hero.role": "Product Manager / AI Product Manager / Product Owner",
+          "hero.growth": "Growth",
+          "hero.tagline": "AI products and LLM systems.\nFrom idea to working product.",
+          "hero.facts": [
+            "App Store — releases, review, compliance, operations",
+            "Product Hunt — Top 10 (day)",
+            "AI agent — multi-model system, routing",
+            "LLM — pretrain (1B), fine-tune Qwen, EQ benchmark ↑"
+          ],
+          "sec.projects": "Projects",
+          "sec.ai": "AI / LLM",
+          "sec.work": "Work",
+          "sec.cap": "Capabilities",
+          "sec.bg": "Background",
+          "sec.current": "Current work",
+          "sec.contact": "Contact",
+          "current.p1": "Active build: AI with a world-model core—a learned forward model of how state evolves under actions and observations—so decisions are tied to predicted consequences, not only to next-token likelihood.",
+          "current.p2": "Architecture, training objectives, and eval emphasise multi-step rollouts, counterfactual state prediction, and behaviour under distribution shift—geared to systems that must act, not only produce fluent text.",
+          "leo.p1": "Mobile application for addiction and co-dependency support.\n\nAI-driven conversational layer focused on empathy.\nStructured user flows, audio and video modules.",
+          "leo.p2": "Published in App Store.\nProduct Hunt — Top 10 (day).",
+          "fides.p1": "Mobile application for Russian-speaking Catholic audience.\n\nContent platform with media modules and structured UX.",
+          "fides.p2": "Published in App Store.\nAward: Best Special Project (Code of Faith).",
+          "marie.p1": "Marie AI is a multi-model agent: routing, one chat layer, image and video generation, in-app browsing when answers need live web context.",
+          "marie.p2": "Routing, provider abstraction, cost and latency limits, steady behaviour when users move between chat, generated media, and browsing. Spec, backend, and deployment stayed on one track.",
+          "ai.intro": "End-to-end model work: pre-training from an empty checkpoint—data mix, schedule, checkpoints, regression checks—then supervised fine-tuning of Qwen for a fixed behavioural goal. How large we trained was driven by budget and compute; scaling pre-training further is mainly a funding question, not missing method. Fine-tuning was judged against a fixed baseline on an EQ-oriented benchmark, one protocol throughout—the pass criterion was measured improvement, not hand-picked chat replies.",
+          "ai.bullets": [
+            "Pre-training in-house: data work, regular evals, clean artifacts. Checkpoints and log on Hugging Face.",
+            "Qwen SFT: target was to beat the base setup on the chosen empathy benchmark; the tuned run cleared that bar in evaluation.",
+            "Baseline kept as control; same splits and harness. Success means numbers, not anecdotes."
+          ],
+          "ai.hf_label": "Checkpoints & publication log",
+          "work.p1": "MelniApps is the legal entity for the shipped B2C apps—Armenia, DUNS on file. As founder I cover product, technical build, and operations (releases, infra edges, where vendors stop). One path from requirements to App Store—not a second, invisible engineering org.",
+          "cap.product.t": "Product",
+          "cap.product.items": [
+            "Framing and prioritisation: metrics that still make sense after App Store review and in retention—not slide milestones alone.",
+            "Shipping: release rhythm, rollback plan, trade-offs spelled out under platform rules."
+          ],
+          "cap.ai.t": "AI systems",
+          "cap.ai.items": [
+            "LLMs with latency, cost, timeouts, and degradation written as product contracts.",
+            "Multi-model routing; fine-tune vs prompt vs RAG decided with evaluation in the loop.",
+            "Assistant behaviour—refusals, tone, escalation—stated so it can be tested and versioned."
+          ],
+          "cap.tech.t": "Technical",
+          "cap.tech.items": [
+            "Integrations, keys, basic observability, a clear buy/build line in production.",
+            "Code prototypes until workflows are clear; stable interfaces after—includes Qwen-class work.",
+            "Training loops, eval harnesses, how models ship: hands-on, not handed off."
+          ],
+          "cap.ux.t": "UX",
+          "cap.ux.items": [
+            "Mobile flows for long, tiring sessions; dense content without visual noise.",
+            "AI UI with visible limits: sourcing hints, undo, no fake “magic.”"
+          ],
+          "bg.p1": "Degree in psychology; eight years of applied practice.",
+          "contact.intro": "Business inquiries:"
+        },
+        ru: {
+          "hero.role": "Product Manager / AI Product Manager / Product Owner",
+          "hero.growth": "Growth",
+          "hero.tagline": "AI-продукты и LLM-системы.\nОт идеи до работающего продукта.",
+          "hero.facts": [
+            "App Store — релизы, review, комплаенс, эксплуатация",
+            "Product Hunt — Top 10 (day)",
+            "AI-агент — мульти-модельная система, маршрутизация",
+            "LLM — с нуля, fine-tune Qwen, EQ benchmark ↑"
+          ],
+          "sec.projects": "Проекты",
+          "sec.ai": "AI / LLM",
+          "sec.work": "Работа",
+          "sec.cap": "Компетенции",
+          "sec.bg": "Бэкграунд",
+          "sec.current": "Текущая деятельность",
+          "sec.contact": "Контакт",
+          "current.p1": "Сейчас в работе — ИИ с опорой на world model: обучаемая прямая модель динамики среды (как меняется состояние при действиях и наблюдениях), чтобы выбор шагов опирался на прогноз последствий, а не только на языковую правдоподобность.",
+          "current.p2": "Архитектура, цели обучения и проверки заточены под многошаговые rollouts, контрфактуальное предсказание состояния и устойчивость при сдвиге данных — в задачах, где нужен действующий агент, а не только связный текст.",
+          "leo.p1": "Мобильное приложение для зависимых и созависимых.\n\nAI-диалог с фокусом на эмпатию.\nСтруктурированные пользовательские сценарии, аудио и видео модули.",
+          "leo.p2": "Опубликовано в App Store.\nProduct Hunt — Top 10 (day).",
+          "fides.p1": "Мобильное приложение для русскоязычных католиков.\n\nКонтентная платформа с медиамодулями и продуманной UX-логикой.",
+          "fides.p2": "Опубликовано в App Store.\nНаграда: Лучший спецпроект (Код веры).",
+          "marie.p1": "Marie AI — мультимодельный агент: маршрутизация, один разговорный слой, генерация изображений и видео, встроенный браузинг, когда нужен актуальный веб-контекст.",
+          "marie.p2": "Маршрутизация, абстракция провайдеров, лимиты задержки и стоимости, ровное поведение при переходе между чатом, медиа и браузером. Спецификация, бэкенд и выкатка — одним контуром.",
+          "ai.intro": "Полный цикл по модели: претрейн с пустого чекпойнта — смесь данных, расписание, чекпойнты, регрессии — затем supervised fine-tuning Qwen под фиксированную цель по поведению. Масштаб обучения задан бюджетом и вычислениями; больше претрейн — в первую очередь вопрос финансирования, а не «не умею собрать пайплайн». Дообучение проверялось против фиксированной базы на EQ-ориентированном бенчмарке, один протокол — успех только при измеримом улучшении, не «красивый ответ».",
+          "ai.bullets": [
+            "Претрейн in-house: данные, регулярные прогоны, аккуратные артефакты. Чекпойнты и журнал — на Hugging Face.",
+            "SFT Qwen: цель — выше базовой конфигурации на выбранном эмпатийном бенчмарке; в прогонке порог выполнен.",
+            "База как контроль, те же сплиты и харнес. Успех — по цифрам, не по примерам в чате."
+          ],
+          "ai.hf_label": "Чекпойнты и журнал публикаций",
+          "work.p1": "MelniApps — юрлицо под выпущенные B2C-приложения: Армения, DUNS. Как основатель веду продукт, техническую реализацию и операционку (релизы, граница с инфрой и вендорами). Один путь от требований до App Store — без второй «невидимой» dev-команды.",
+          "cap.product.t": "Продукт",
+          "cap.product.items": [
+            "Формулировка и приоритеты: метрики, которые переживают ревью App Store и удержание — не только вехи в слайдах.",
+            "Поставка: ритм релизов, план отката, компромиссы под правила платформы."
+          ],
+          "cap.ai.t": "ИИ-системы",
+          "cap.ai.items": [
+            "LLM: задержка, стоимость, таймауты и деградация оформлены как продуктовые условия.",
+            "Маршрутизация моделей; SFT, промпт или RAG — с оценкой в контуре, не по привычке.",
+            "Поведение ассистента — отказы, тон, эскалация: так, чтобы это можно было тестировать и версионировать."
+          ],
+          "cap.tech.t": "Техника",
+          "cap.tech.items": [
+            "Интеграции, ключи, базовая наблюдаемость, ясная линия «купить / написать» в проде.",
+            "Прототипы в коде, пока процесс не ясен; стабильные контракты после — включая стек класса Qwen.",
+            "Обучение, харнесы, выкатка моделей — на собственной стороне, не делегированы «по умолчанию»."
+          ],
+          "cap.ux.t": "UX",
+          "cap.ux.items": [
+            "Мобильные сценарии длинных и утомительных сессий; плотный контент без визуального шума.",
+            "ИИ в интерфейсе с видимыми ограничениями: откуда ответ, отмена, без притворной «магии»."
+          ],
+          "bg.p1": "Высшее по психологии; восемь лет прикладной практики.",
+          "contact.intro": "Рабочие вопросы:"
+        }
+      };
+
+      function fillList(el, key, lang) {
+        const items = DATA[lang][key];
+        if (!items || !el) return;
+        el.innerHTML = items.map(function (t) {
+          return "<li>" + t + "</li>";
+        }).join("");
+      }
+
+      function applyLang(lang) {
+        document.documentElement.lang = lang === "ru" ? "ru" : "en";
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          var k = el.getAttribute("data-i18n");
+          if (DATA[lang][k] !== undefined) el.textContent = DATA[lang][k];
+        });
+        document.querySelectorAll("[data-i18n-list]").forEach(function (el) {
+          fillList(el, el.getAttribute("data-i18n-list"), lang);
+        });
+        fillList(document.getElementById("hero-facts"), "hero.facts", lang);
+
+        document.getElementById("btn-en").setAttribute("aria-pressed", lang === "en" ? "true" : "false");
+        document.getElementById("btn-ru").setAttribute("aria-pressed", lang === "ru" ? "true" : "false");
+
+        try {
+          localStorage.setItem("siteLang", lang);
+        } catch (e) {}
+      }
+
+      var stored = null;
+      try {
+        stored = localStorage.getItem("siteLang");
+      } catch (e) {}
+
+      var initial = stored === "ru" || stored === "en" ? stored : (navigator.language && navigator.language.toLowerCase().startsWith("ru") ? "ru" : "en");
+      applyLang(initial);
+
+      document.getElementById("btn-en").addEventListener("click", function () {
+        applyLang("en");
+      });
+      document.getElementById("btn-ru").addEventListener("click", function () {
+        applyLang("ru");
+      });
+    })();
+  </script>
+</body>
+</html>
